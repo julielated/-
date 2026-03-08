@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как хорошо ты знаешь друга?</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .app-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+        }
+        .tabs {
+            display: flex;
+            background: #f1f1f1;
+        }
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: 0.3s;
+            border-bottom: 4px solid transparent;
+        }
+        .tab.active {
+            background: white;
+            border-bottom: 4px solid #667eea;
+            color: #667eea;
+        }
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-left: 8px solid #667eea;
+            padding-left: 20px;
+        }
+        .question-card {
+            background: #f9f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+        }
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+        .option-label:hover {
+            background: #e0e7ff;
+            border-color: #667eea;
+        }
+        input[type="radio"] {
+            accent-color: #667eea;
+            transform: scale(1.1);
+            margin-right: 5px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            border: 1px solid transparent;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(102,126,234,0.5);
+        }
+        .btn.secondary {
+            background: #48bb78;
+            box-shadow: 0 8px 20px rgba(72,187,120,0.4);
+        }
+        .btn.secondary:hover {
+            background: #38a169;
+        }
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f4f8;
+            border-radius: 15px;
+            border-left: 8px solid #48bb78;
+        }
+        .result-area h3 {
+            margin-top: 0;
+            color: #22543d;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .correct {
+            background-color: #c6f6d5;
+            color: #22543d;
+            font-weight: 600;
+        }
+        .incorrect {
+            background-color: #fed7d7;
+            color: #742a2a;
+            font-weight: 600;
+        }
+        .link-box {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .link-box input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+        .small-btn {
+            background: #9f7aea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .small-btn:hover {
+            background: #805ad5;
+        }
+        .friend-selector {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .friend-selector select {
+            flex: 1;
+            padding: 12px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e0;
+            font-size: 1rem;
+        }
+        .warning {
+            color: #e53e3e;
+            font-weight: 500;
+            margin: 15px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="app">
+    <div class="tabs">
+        <button class="tab active" data-tab="create">📝 Создать свой тест</button>
+        <button class="tab" data-tab="take">🤔 Пройти тест друга</button>
+    </div>
+
+    <!-- Вкладка создания теста -->
+    <div id="tab-create" class="tab-content active">
+        <h2>Расскажи о себе правду</h2>
+        <p style="color: #4a5568;">Ответь на вопросы честно — это будет эталоном для твоих друзей.</p>
+        <div id="create-questions-container"></div>
+        <button class="btn" id="saveMyAnswersBtn">💾 Сохранить мои ответы</button>
+        <div id="creation-result" class="result-area" style="display: none;">
+            <h3>✅ Твой тест готов!</h3>
+            <p>Теперь друзья могут пройти его. Отправь им ссылку или имя:</p>
+            <div class="link-box">
+                <input type="text" id="friendNameDisplay" readonly value="друг_антон">
+                <button class="small-btn" id="copyNameBtn">📋 Копировать</button>
+            </div>
+            <p><small>Когда друг будет проходить тест, он должен ввести это имя.</small></p>
+        </div>
+    </div>
+
+    <!-- Вкладка прохождения теста -->
+    <div id="tab-take" class="tab-content">
+        <h2>Проверь, как хорошо ты знаешь друга</h2>
+        <div class="friend-selector">
+            <select id="friendSelector">
+                <option value="">-- Выбери друга (название теста) --</option>
+            </select>
+            <button class="small-btn" id="loadFriendTestBtn">Загрузить</button>
+        </div>
+        <div id="take-questions-container" style="display: none;">
+            <p style="margin-bottom: 20px;">Отвечай на вопросы так, как <strong>ответил бы твой друг</strong>.</p>
+            <div id="take-questions-list"></div>
+            <button class="btn secondary" id="checkAnswersBtn">🔍 Узнать результат</button>
+        </div>
+        <div id="take-result" class="result-area" style="display: none;">
+            <h3 id="result-score"></h3>
+            <div id="result-detail"></div>
+        </div>
+        <div id="no-friend-warning" class="warning" style="display: none;">⚠️ Сначала выбери друга из списка</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- База данных вопросов (20 штук) ----------
+        const QUESTIONS = [
+            { //1
+                text: "Какой твой любимый цвет?",
+                options: ["Синий", "Красный", "Черный", "Зеленый", "Фиолетовый", "Желтый", "Розовый", "Белый", "Оранжевый"]
+            },
+            { //2
+                text: "Какую страну ты больше всего хочешь посетить?",
+                options: ["Япония", "Италия", "Франция", "Таиланд", "Исландия", "США", "Австралия", "Норвегия", "Греция"]
+            },
+            { //3
+                text: "Какое времяпрепровождение ты бы выбрал в свободное время?",
+                options: ["Посмотреть кино", "Встреча с друзьями", "Компьютерные игры", "Прогулка на природе", "Чтение книги", "Спорт", "Путешествие", "Рисование", "Кулинария"]
+            },
+            { //4
+                text: "Сколько бы детей ты хотел?",
+                options: ["0 (вообще не хочу)", "1 ребенка", "2 детей", "3 детей", "4 и больше", "Пока не думал об этом", "Хочу, но не сейчас"]
+            },
+            { //5
+                text: "Кофе или чай?",
+                options: ["Кофе", "Чай", "Предпочитаю какао", "Только вода", "Не пью горячее", "Зависит от настроения", "Соки/смузи"]
+            },
+            { //6
+                text: "Кошка или собака?",
+                options: ["Кошка", "Собака", "И те, и другие", "Ни те, ни другие (другое животное)", "Попугай", "Грызуны", "Рыбки", "Рептилии"]
+            },
+            { //7
+                text: "Что выберешь на завтрак?",
+                options: ["Омлет/яичница", "Каша", "Бутерброды", "Йогурт/творог", "Блинчики", "Фрукты", "Вообще не завтракаю", "Круассан/выпечка"]
+            },
+            { //8
+                text: "Какую суперсилу ты бы хотел?",
+                options: ["Невидимость", "Умение летать", "Чтение мыслей", "Телепортация", "Исцеление", "Сверхскорость", "Управление временем", "Изменение реальности"]
+            },
+            { //9
+                text: "Какой жанр фильмов тебе ближе?",
+                options: ["Комедия", "Фантастика", "Ужасы", "Драма", "Боевик", "Детектив", "Мультфильмы", "Документальное", "Мелодрама"]
+            },
+            { //10
+                text: "Что бы ты взял на необитаемый остров?",
+                options: ["Нож", "Спички/зажигалку", "Палатку", "Книгу", "Телефон (если бы работал)", "Топор", "Веревку", "Аптечку", "Еду"]
+            },
+            { //11
+                text: "Твой идеальный выходной?",
+                options: ["Ничего не делать дома", "Пойти в лес/парк", "Встреча с друзьями", "Шоппинг", "Поход в кино", "Компьютерные игры", "Путешествие за город", "Заняться хобби"]
+            },
+            { //12
+                text: "Если бы выиграл миллион, что сделал бы в первую очередь?",
+                options: ["Куплю квартиру/дом", "Положу в банк", "Отправлюсь в путешествие", "Куплю машину", "Раздам долги", "Помогу семье", "Открою бизнес", "Закачу вечеринку"]
+            },
+            { //13
+                text: "Какой тип отдыха предпочитаешь?",
+                options: ["Пляжный", "Экскурсионный", "Активный (походы, вело)", "Все включено в отеле", "Дикарем (палатки)", "Круиз", "Лыжные курорты", "Санаторий"]
+            },
+            { //14
+                text: "Что для тебя важнее в людях?",
+                options: ["Чувство юмора", "Честность", "Интеллект", "Доброта", "Надежность", "Щедрость", "Амбициозность", "Открытость"]
+            },
+            { //15
+                text: "Как ты чаще всего проводишь вечер пятницы?",
+                options: ["Дома с сериалом", "Иду в бар/клуб", "Встречаюсь с друзьями", "Зависаю в интернете", "Сижу в видеоиграх", "Работаю (фриланс)", "Гуляю один", "Занимаюсь спортом"]
+            },
+            { //16
+                text: "Какую музыку ты предпочитаешь?",
+                options: ["Рок", "Поп", "Хип-хоп/рэп", "Электронная", "Классика", "Джаз", "R'n'B", "Инди", "Метал"]
+            },
+            { //17
+                text: "Что тебя раздражает больше всего?",
+                options: ["Ложь", "Глупость", "Опоздания", "Шум", "Хамство", "Нытье", "Несправедливость", "Лень"]
+            },
+            { //18
+                text: "Какая еда для тебя — comfort food?",
+                options: ["Пицца", "Бургеры", "Шоколад", "Мороженое", "Мамина еда", "Суши", "Паста", "Картошка фри", "Суп"]
+            },
+            { //19
+                text: "Готов ли ты спонтанно сорваться в путешествие?",
+                options: ["Да, хоть завтра", "Только если все спланировано", "Нет, я домосед", "Если уговорить, то да", "Только в определенные места", "Зависит от компании", "Спонтанность — это мое все"]
+            },
+            { //20
+                text: "Какой подарок тебе понравится больше?",
+                options: ["Деньги", "Эмоции (билеты, квест)", "Гаджет", "Одежда/аксессуар", "Книга", "Сделаный своими руками", "Путешествие", "Сертификат в магазин"]
+            }
+        ];
+
+        // Хранилище: ключ - имя друга (строка), значение - массив ответов (индексы)
+        let friendsTests = {};
+
+        // Загружаем из localStorage при старте
+        function loadFromStorage() {
+            const stored = localStorage.getItem('friendsTests');
+            if (stored) {
+                try {
+                    friendsTests = JSON.parse(stored);
+                } catch (e) {
+                    friendsTests = {};
+                }
+            }
+            // Для демо создадим парочку тестов, если их нет
+            if (Object.keys(friendsTests).length === 0) {
+                // Заглушка: тест Антона (случайные ответы)
+                const randomAnswers = QUESTIONS.map(() => Math.floor(Math.random() * QUESTIONS[0].options.length));
+                friendsTests['антон'] = randomAnswers;
+                // Заглушка: тест Маши
+                const randomAnswers2 = QUESTIONS.map(() => Math.floor(Math.random() * QUESTIONS[0].options.length));
+                friendsTests['маша'] = randomAnswers2;
+                saveToStorage();
+            }
+        }
+        function saveToStorage() {
+            localStorage.setItem('friendsTests', JSON.stringify(friendsTests));
+        }
+
+        // Рендер вкладки создания (все 20 вопросов)
+        function renderCreateTab() {
+            const container = document.getElementById('create-questions-container');
+            let html = '';
+            QUESTIONS.forEach((q, idx) => {
+                html += `<div class="question-card"><div class="question-text">${idx+1}. ${q.text}</div><div class="options-grid">`;
+                q.options.forEach((opt, optIdx) => {
+                    html += `<label class="option-label"><input type="radio" name="q${idx}" value="${optIdx}"> ${opt}</label>`;
+                });
+                html += `</div></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // Рендер списка друзей в селекте
+        function updateFriendSelector(selectedName = '') {
+            const select = document.getElementById('friendSelector');
+            let options = '<option value="">-- Выбери друга (название теста) --</option>';
+            for (let name in friendsTests) {
+                options += `<option value="${name}" ${name === selectedName ? 'selected' : ''}>${name}</option>`;
+            }
+            select.innerHTML = options;
+        }
+
+        // Сохранение своего теста
+        document.getElementById('saveMyAnswersBtn').addEventListener('click', () => {
+            const answers = [];
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!selected) {
+                    alert(`Ответь на вопрос ${i+1}!`);
+                    return;
+                }
+                answers.push(parseInt(selected.value));
+            }
+
+            // Просим ввести имя (название теста)
+            let friendName = prompt("Введите имя или название теста (например, твое имя):", "друг_антон");
+            if (!friendName) {
+                alert("Имя не может быть пустым");
+                return;
+            }
+            friendName = friendName.trim().toLowerCase();
+            if (friendName === '') return;
+
+            friendsTests[friendName] = answers;
+            saveToStorage();
+
+            // Показываем результат создания
+            document.getElementById('friendNameDisplay').value = friendName;
+            document.getElementById('creation-result').style.display = 'block';
+            updateFriendSelector(friendName);
+        });
+
+        // Копирование имени
+        document.getElementById('copyNameBtn').addEventListener('click', () => {
+            const copyText = document.getElementById('friendNameDisplay');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard?.writeText(copyText.value).then(() => {
+                alert('Имя скопировано!');
+            }).catch(() => alert('Нажми Ctrl+C'));
+        });
+
+        // Загрузка теста друга для прохождения
+        document.getElementById('loadFriendTestBtn').addEventListener('click', () => {
+            const select = document.getElementById('friendSelector');
+            const friendName = select.value;
+            if (!friendName) {
+                document.getElementById('no-friend-warning').style.display = 'block';
+                document.getElementById('take-questions-container').style.display = 'none';
+                document.getElementById('take-result').style.display = 'none';
+                return;
+            }
+            document.getElementById('no-friend-warning').style.display = 'none';
+
+            const answers = friendsTests[friendName];
+            if (!answers) return;
+
+            // Рендерим вопросы для прохождения
+            let html = '';
+            QUESTIONS.forEach((q, idx) => {
+                html += `<div class="question-card"><div class="question-text">${idx+1}. ${q.text}</div><div class="options-grid">`;
+                q.options.forEach((opt, optIdx) => {
+                    html += `<label class="option-label"><input type="radio" name="take_q${idx}" value="${optIdx}"> ${opt}</label>`;
+                });
+                html += `</div></div>`;
+            });
+            document.getElementById('take-questions-list').innerHTML = html;
+            document.getElementById('take-questions-container').style.display = 'block';
+            document.getElementById('take-result').style.display = 'none';
+            // Сохраним имя в data
+            document.getElementById('take-questions-container').dataset.friend = friendName;
+        });
+
+        // Проверка ответов
+        document.getElementById('checkAnswersBtn').addEventListener('click', () => {
+            const friendName = document.getElementById('take-questions-container').dataset.friend;
+            if (!friendName) return;
+            const correctAnswers = friendsTests[friendName];
+            if (!correctAnswers) return;
+
+            const userAnswers = [];
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const selected = document.querySelector(`input[name="take_q${i}"]:checked`);
+                if (!selected) {
+                    alert(`Ответь на вопрос ${i+1}!`);
+                    return;
+                }
+                userAnswers.push(parseInt(selected.value));
+            }
+
+            // Подсчет
+            let correctCount = 0;
+            let detailsHtml = '<table><tr><th>Вопрос</th><th>Ваш ответ</th><th>Верный ответ</th><th>Результат</th></tr>';
+
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const isCorrect = (userAnswers[i] === correctAnswers[i]);
+                if (isCorrect) correctCount++;
+                const userOpt = QUESTIONS[i].options[userAnswers[i]];
+                const correctOpt = QUESTIONS[i].options[correctAnswers[i]];
+                const status = isCorrect ? '✅' : '❌';
+                const rowClass = isCorrect ? 'correct' : 'incorrect';
+                detailsHtml += `<tr class="${rowClass}"><td>${i+1}</td><td>${userOpt}</td><td>${correctOpt}</td><td>${status}</td></tr>`;
+            }
+            detailsHtml += '</table>';
+
+            const score = Math.round((correctCount / QUESTIONS.length) * 100);
+            document.getElementById('result-score').innerHTML = `Ты знаешь друга на ${score}% (${correctCount} из ${QUESTIONS.length})`;
+            document.getElementById('result-detail').innerHTML = detailsHtml;
+            document.getElementById('take-result').style.display = 'block';
+        });
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const tabName = tab.dataset.tab;
+                document.getElementById(`tab-${tabName}`).classList.add('active');
+            });
+        });
+
+        // Инициализация
+        loadFromStorage();
+        renderCreateTab();
+        updateFriendSelector();
+    })();
+</script>
+</body>
+</html>
